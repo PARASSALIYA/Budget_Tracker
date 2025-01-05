@@ -4,6 +4,8 @@ import '../../category/views/category.dart';
 import '../../allcategory/views/allcategory.dart';
 import 'package:budget_tracker/pages/bottomnavigation/controller/bottomnavigation_controller.dart';
 
+import '../../spending/views/spending.dart';
+
 class BottomNavigationPage extends StatelessWidget {
   const BottomNavigationPage({super.key});
 
@@ -18,9 +20,7 @@ class BottomNavigationPage extends StatelessWidget {
           controller.changeIndex(value);
         },
         children: const [
-          Center(
-            child: Text('Home'),
-          ),
+          SpendingPage(),
           AllCategoryPage(),
           CategoryPage(),
         ],

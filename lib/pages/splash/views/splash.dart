@@ -10,7 +10,7 @@ class SplashPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(
-      const Duration(seconds: 3),
+      const Duration(seconds: 6),
       () => Get.offNamed(GetPages.bottomNavigation),
     );
     return Scaffold(

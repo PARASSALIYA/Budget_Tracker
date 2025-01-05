@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 class BottomNavigationController extends GetxController {
   RxInt currentIndex = 0.obs;
+
   PageController pageController = PageController();
 
   void changeIndex(int index) {
