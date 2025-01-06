@@ -56,9 +56,10 @@ class CategoryPage extends StatelessWidget {
                         child: controller.categoryIndex == index
                             ? Card(
                                 child: ListTile(
-                                  leading: Image.asset(
-                                    controller.categoryMap[index]['images'],
-                                    height: 30.h,
+                                  leading: CircleAvatar(
+                                    backgroundImage: AssetImage(
+                                      controller.categoryMap[index]['images'],
+                                    ),
                                   ),
                                   title: Text(
                                     controller.categoryMap[index]['name'],
@@ -79,9 +80,10 @@ class CategoryPage extends StatelessWidget {
                                 ),
                               )
                             : ListTile(
-                                leading: Image.asset(
-                                  controller.categoryMap[index]['images'],
-                                  height: 30.h,
+                                leading: CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                    controller.categoryMap[index]['images'],
+                                  ),
                                 ),
                                 title: Text(
                                   controller.categoryMap[index]['name'],

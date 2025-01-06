@@ -4,7 +4,7 @@ class CategoryModel {
   int id;
   String name;
   Uint8List image;
-  int? imageIndex;
+  int imageIndex;
   CategoryModel({
     required this.id,
     required this.name,

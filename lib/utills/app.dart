@@ -10,8 +10,8 @@ class BudgetTracker extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(builder: (context, child) {
       return GetMaterialApp(
-        // theme: ThemeData.dark(),
-        // themeMode: ThemeMode.dark,
+        theme: ThemeData.dark(),
+        themeMode: ThemeMode.system,
         debugShowCheckedModeBanner: false,
         getPages: GetPages.getPages,
       );

@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../allspending/views/allspending.dart';
 import '../../category/views/category.dart';
 import '../../allcategory/views/allcategory.dart';
-import 'package:budget_tracker/pages/bottomnavigation/controller/bottomnavigation_controller.dart';
-
 import '../../spending/views/spending.dart';
+import 'package:budget_tracker/pages/bottomnavigation/controller/bottomnavigation_controller.dart';
 
 class BottomNavigationPage extends StatelessWidget {
   const BottomNavigationPage({super.key});
@@ -20,6 +20,7 @@ class BottomNavigationPage extends StatelessWidget {
           controller.changeIndex(value);
         },
         children: const [
+          AllSpendingPage(),
           SpendingPage(),
           AllCategoryPage(),
           CategoryPage(),
@@ -36,18 +37,19 @@ class BottomNavigationPage extends StatelessWidget {
             destinations: const [
               NavigationDestination(
                 icon: Icon(Icons.home),
-                label: 'Home',
-                selectedIcon: Icon(Icons.home),
+                label: 'All Spending',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.home),
+                label: 'Spending',
               ),
               NavigationDestination(
                 icon: Icon(Icons.category),
-                label: 'Explore',
-                selectedIcon: Icon(Icons.explore),
+                label: 'All Category',
               ),
               NavigationDestination(
                 icon: Icon(Icons.category),
-                label: 'Profile',
-                selectedIcon: Icon(Icons.person),
+                label: 'Category',
               ),
             ],
           );

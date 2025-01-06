@@ -70,9 +70,8 @@ class DBHelper {
         "UPDATE $tableName SET $categoryName = ?,$categoryID = ?,$categoryImage = ? WHERE $categoryID = ${model.id};";
     List args = [
       model.name,
-      model.image,
       model.imageIndex,
-      model.id,
+      model.image,
     ];
     return await db?.rawUpdate(query, args);
   }

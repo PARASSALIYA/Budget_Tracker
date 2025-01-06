@@ -94,7 +94,7 @@ class AllCategoryPage extends StatelessWidget {
                                             child: ListView.builder(
                                               itemCount:
                                                   controller.categoryMap.length,
-                                              itemBuilder: (context, index) {
+                                              itemBuilder: (context, i) {
                                                 return GetBuilder<
                                                     CategoryController>(
                                                   builder: (context) {
@@ -102,78 +102,60 @@ class AllCategoryPage extends StatelessWidget {
                                                       onTap: () {
                                                         controller
                                                             .getCategoryIndex(
-                                                                index);
+                                                                i);
                                                       },
-                                                      child: (categoryListData[
-                                                                      index]
-                                                                  .name !=
+                                                      child: Card(
+                                                        color: (controller
+                                                                    .categoryIndex !=
+                                                                null)
+                                                            ? (controller
+                                                                        .categoryIndex ==
+                                                                    i)
+                                                                ? Colors.green
+                                                                : Colors
+                                                                    .transparent
+                                                            : (i ==
+                                                                    categoryListData[
+                                                                            index]
+                                                                        .imageIndex)
+                                                                ? Colors.green
+                                                                : Colors
+                                                                    .transparent,
+                                                        child: ListTile(
+                                                          leading: CircleAvatar(
+                                                            backgroundImage:
+                                                                AssetImage(
                                                               controller
                                                                       .categoryMap[
-                                                                  index]['name'])
-                                                          ? Card(
-                                                              color: Colors
-                                                                  .blueGrey,
-                                                              child: ListTile(
-                                                                leading:
-                                                                    Image.asset(
-                                                                  controller.categoryMap[
-                                                                          index]
-                                                                      [
-                                                                      'images'],
-                                                                  height: 30.h,
-                                                                ),
-                                                                title: Text(
-                                                                  controller.categoryMap[
-                                                                          index]
-                                                                      ['name'],
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        16.sp,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                                ),
-                                                                trailing: controller
-                                                                            .categoryIndex ==
-                                                                        index
-                                                                    ? const Icon(
-                                                                        Icons
-                                                                            .check,
-                                                                        color: Colors
-                                                                            .green,
-                                                                      )
-                                                                    : const Icon(
-                                                                        Icons
-                                                                            .check,
-                                                                        color: Colors
-                                                                            .transparent,
-                                                                      ),
-                                                              ),
-                                                            )
-                                                          : ListTile(
-                                                              leading:
-                                                                  Image.asset(
-                                                                controller.categoryMap[
-                                                                        index]
-                                                                    ['images'],
-                                                                height: 30.h,
-                                                              ),
-                                                              title: Text(
-                                                                controller.categoryMap[
-                                                                        index]
-                                                                    ['name'],
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      16.sp,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
+                                                                  i]['images'],
                                                             ),
+                                                          ),
+                                                          title: Text(
+                                                            controller
+                                                                    .categoryMap[
+                                                                i]['name'],
+                                                            style: TextStyle(
+                                                              fontSize: 16.sp,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
+                                                          ),
+                                                          trailing: controller
+                                                                      .categoryIndex ==
+                                                                  i
+                                                              ? const Icon(
+                                                                  Icons.check,
+                                                                  color: Colors
+                                                                      .green,
+                                                                )
+                                                              : const Icon(
+                                                                  Icons.check,
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                ),
+                                                        ),
+                                                      ),
                                                     );
                                                   },
                                                 );
