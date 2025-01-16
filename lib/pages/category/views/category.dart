@@ -1,8 +1,8 @@
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:budget_tracker/pages/category/controller/category_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -33,6 +33,13 @@ class CategoryPage extends StatelessWidget {
               height: 10.h,
             ),
             TextFormField(
+              onChanged: (value) {
+                if (value.isNotEmpty) {
+                  controller.searchCategoryMapData(value);
+                } else {
+                  controller.assignAllCategory();
+                }
+              },
               controller: textController,
               validator: (value) => value!.isEmpty ? "Enter Category" : null,
               decoration: InputDecoration(
@@ -44,42 +51,17 @@ class CategoryPage extends StatelessWidget {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: controller.categoryMap.length,
-                itemBuilder: (context, index) {
-                  return GetBuilder<CategoryController>(
-                    builder: (context) {
-                      return GestureDetector(
-                        onTap: () {
-                          controller.getCategoryIndex(index);
-                        },
-                        child: controller.categoryIndex == index
-                            ? Card(
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                      controller.categoryMap[index]['images'],
-                                    ),
-                                  ),
-                                  title: Text(
-                                    controller.categoryMap[index]['name'],
-                                    style: TextStyle(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  trailing: controller.categoryIndex == index
-                                      ? const Icon(
-                                          Icons.check,
-                                          color: Colors.green,
-                                        )
-                                      : const Icon(
-                                          Icons.check,
-                                          color: Colors.transparent,
-                                        ),
-                                ),
-                              )
-                            : ListTile(
+              child: GetBuilder<CategoryController>(builder: (context) {
+                return ListView.builder(
+                  itemCount: controller.categoryMap.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        controller.getCategoryIndex(index);
+                      },
+                      child: controller.categoryIndex == index
+                          ? Card(
+                              child: ListTile(
                                 leading: CircleAvatar(
                                   backgroundImage: AssetImage(
                                     controller.categoryMap[index]['images'],
@@ -102,17 +84,43 @@ class CategoryPage extends StatelessWidget {
                                         color: Colors.transparent,
                                       ),
                               ),
-                      );
-                    },
-                  );
-                },
-              ),
+                            )
+                          : ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: AssetImage(
+                                  controller.categoryMap[index]['images'],
+                                ),
+                              ),
+                              title: Text(
+                                controller.categoryMap[index]['name'],
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              trailing: controller.categoryIndex == index
+                                  ? const Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                    )
+                                  : const Icon(
+                                      Icons.check,
+                                      color: Colors.transparent,
+                                    ),
+                            ),
+                    );
+                  },
+                );
+              }),
             ),
             Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton.extended(
+                backgroundColor: Colors.blueGrey,
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
+                    textController.text = controller
+                        .categoryMap[controller.categoryIndex!]['name'];
                     String name = textController.text;
 
                     String assetPath = controller

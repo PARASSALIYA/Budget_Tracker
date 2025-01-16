@@ -1,20 +1,452 @@
+import 'package:budget_tracker/model/category_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import '../../../model/category_model.dart';
+
+import '../../../model/spending_model.dart';
 import '../../category/controller/category_controller.dart';
 import '../../category/views/category.dart';
+import '../controller/spending_controller.dart';
 
 class SpendingPage extends StatelessWidget {
   const SpendingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController textController = TextEditingController();
     CategoryController controller = Get.put(CategoryController());
-    controller.fetchCategoryData();
-    return Scaffold();
+    SpendingController spendingController = Get.put(SpendingController());
+    TextEditingController textController = TextEditingController();
+    TextEditingController amountController = TextEditingController();
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              SizedBox(height: 80.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: const Icon(Icons.close),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        // name
+                        String categoryName = controller
+                            .categoryMap[controller.categoryIndex!]['name'];
+                        // image
+                        String assetPath = controller
+                            .categoryMap[controller.categoryIndex!]['images'];
+                        ByteData data = await rootBundle.load(assetPath);
+                        Uint8List images = data.buffer.asUint8List();
+                        SpendingModel model = SpendingModel(
+                            name: textController.text,
+                            amount: num.parse(amountController.text),
+                            mode: spendingController.mode,
+                            image: images,
+                            date:
+                                "${spendingController.dateTime?.day}/${spendingController.dateTime?.month}/${spendingController.dateTime?.year}",
+                            time:
+                                "${spendingController.dateTime?.hour}:${spendingController.dateTime?.minute}:${spendingController.dateTime?.second}");
+                        spendingController.initSpendingData(model);
+                        spendingController.fetchSpendingData();
+                        controller.clearCategoryIndex();
+                        spendingController.clear();
+                        textController.clear();
+                        spendingController.dateTime = null;
+                        spendingController.timeOfDay = null;
+                        amountController.clear();
+                      }
+                    },
+                    icon: const Icon(Icons.check),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.bottomSheet(
+                          BottomSheet(
+                            onClosing: () {},
+                            builder: (context) {
+                              return Container(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Category",
+                                      style: TextStyle(
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: FutureBuilder(
+                                        future: controller.categoryList,
+                                        builder: (context, snapshot) {
+                                          {
+                                            List<CategoryModel>
+                                                categoryListData =
+                                                snapshot.data ?? [];
+                                            return ListView.builder(
+                                              itemCount:
+                                                  categoryListData.length,
+                                              itemBuilder: (context, index) {
+                                                return GetBuilder<
+                                                    CategoryController>(
+                                                  builder: (context) {
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        controller
+                                                            .getCategoryIndex(
+                                                                index);
+                                                      },
+                                                      child: controller
+                                                                  .categoryIndex ==
+                                                              index
+                                                          ? Card(
+                                                              child: ListTile(
+                                                                leading:
+                                                                    CircleAvatar(
+                                                                  backgroundImage:
+                                                                      MemoryImage(
+                                                                    categoryListData[
+                                                                            index]
+                                                                        .image,
+                                                                  ),
+                                                                ),
+                                                                title: Text(
+                                                                  categoryListData[
+                                                                          index]
+                                                                      .name,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        16.sp,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                                trailing: controller
+                                                                            .categoryIndex ==
+                                                                        index
+                                                                    ? const Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .green,
+                                                                      )
+                                                                    : const Icon(
+                                                                        Icons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .transparent,
+                                                                      ),
+                                                              ),
+                                                            )
+                                                          : ListTile(
+                                                              leading:
+                                                                  CircleAvatar(
+                                                                backgroundImage:
+                                                                    MemoryImage(
+                                                                  categoryListData[
+                                                                          index]
+                                                                      .image,
+                                                                ),
+                                                              ),
+                                                              title: Text(
+                                                                categoryListData[
+                                                                        index]
+                                                                    .name,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      16.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                              ),
+                                                              trailing: controller
+                                                                          .categoryIndex ==
+                                                                      index
+                                                                  ? const Icon(
+                                                                      Icons
+                                                                          .check,
+                                                                      color: Colors
+                                                                          .green,
+                                                                    )
+                                                                  : const Icon(
+                                                                      Icons
+                                                                          .check,
+                                                                      color: Colors
+                                                                          .transparent,
+                                                                    ),
+                                                            ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 50.h,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(10),
+                        margin: EdgeInsets.only(right: 10.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 2,
+                          ),
+                        ),
+                        child: GetBuilder<CategoryController>(
+                          builder: (context) {
+                            return FutureBuilder(
+                                future: controller.categoryList,
+                                builder: (context, snapshot) {
+                                  List<CategoryModel> categoryListData =
+                                      snapshot.data ?? [];
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      (controller.categoryIndex != null)
+                                          ? CircleAvatar(
+                                              backgroundImage: MemoryImage(
+                                                  categoryListData[controller
+                                                          .categoryIndex!]
+                                                      .image),
+                                              radius: 15.r,
+                                            )
+                                          : const CircleAvatar(),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
+                                      Text(
+                                        (controller.categoryIndex == null)
+                                            ? "Category"
+                                            : categoryListData[
+                                                    controller.categoryIndex!]
+                                                .name,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.sp,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  // MOde
+                  Expanded(
+                    child: GetBuilder<CategoryController>(
+                      builder: (context) {
+                        return GestureDetector(
+                          onTap: () {
+                            Get.bottomSheet(
+                              BottomSheet(
+                                onClosing: () {},
+                                builder: (context) {
+                                  return Container(
+                                    padding: const EdgeInsets.all(16),
+                                    height: 110.h,
+                                    width: double.infinity,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        RadioMenuButton(
+                                          onChanged: spendingController.getMode,
+                                          value: "Online",
+                                          groupValue: spendingController.mode,
+                                          child: const Text("Online"),
+                                        ),
+                                        RadioMenuButton(
+                                          onChanged: spendingController.getMode,
+                                          value: "Offline",
+                                          groupValue: spendingController.mode,
+                                          child: const Text("Offline"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: GetBuilder<SpendingController>(
+                                builder: (context) {
+                              return Text(
+                                spendingController.mode ?? "Mode",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.sp,
+                                ),
+                              );
+                            }),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              // NOtes
+              TextField(
+                maxLines: 3,
+                controller: textController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  hintText: "Add Notes",
+                ),
+                keyboardType: TextInputType.text,
+              ),
+              SizedBox(height: 20.h),
+              // Amount
+              TextFormField(
+                validator: (val) =>
+                    (val!.isEmpty) ? "Amount can't be empty" : null,
+                maxLines: 3,
+                controller: amountController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  hintText: "Add Amount",
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              SizedBox(height: 20.h),
+              // Date and Time
+              Row(
+                children: [
+                  // DateTime
+                  Expanded(
+                    child: GetBuilder<SpendingController>(
+                      builder: (_) {
+                        return Container(
+                          height: 50.h,
+                          padding: const EdgeInsets.all(10),
+                          margin: EdgeInsets.only(right: 10.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              DateTime? date = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2030),
+                              );
+
+                              spendingController.getSpendingDate(date!);
+                            },
+                            label: (spendingController.dateTime != null)
+                                ? Text(
+                                    "${spendingController.dateTime?.day}/${spendingController.dateTime?.month}/${spendingController.dateTime?.year}",
+                                  )
+                                : const Text(
+                                    "DD/MM/YYYY",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                            icon: const Icon(
+                              Icons.date_range,
+                              size: 20,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // TimeOfDay
+                  Expanded(
+                    child: GetBuilder<SpendingController>(
+                      builder: (_) {
+                        return GestureDetector(
+                          child: Container(
+                            height: 50.h,
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.all(10),
+                            margin: EdgeInsets.only(right: 10.w),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                            ),
+                            child: TextButton.icon(
+                              onPressed: () async {
+                                TimeOfDay? time = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                );
+                                spendingController.getSpendingTime(time!);
+                              },
+                              icon: const Icon(Icons.timer_outlined),
+                              label: Text(
+                                "${spendingController.timeOfDay?.hour}:${spendingController.timeOfDay?.minute}",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
